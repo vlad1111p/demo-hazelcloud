@@ -1,0 +1,50 @@
+oc login -u developer https://api.crc.testing:6443
+
+mvn clean package -DskipTests
+docker build -t demohazelcast:latest .
+docker tag demohazelcast:latest vlad1111p/demohazelcast:latest
+docker push vlad1111p/demohazelcast:latest
+
+oc rollout restart deployment/demo-hazelcast-deployment
+
+crc setup
+crc start
+https://console-openshift-console.apps-crc.testing
+
+oc new-project demo-hazelcast
+oc project demo-hazelcast
+
+oc get pods -n demo-hazelcast
+oc get endpoints -n demo-hazelcast
+
+
+
+
+oc new-app --template=postgresql-persistent `
+    -p POSTGRESQL_USER=demo_user `
+    -p POSTGRESQL_PASSWORD=demo_pass `
+    -p POSTGRESQL_DATABASE=demo `
+    -p VOLUME_CAPACITY=1Gi
+
+
+oc apply -f hazelcast-role.yaml
+oc apply -f hazelcast-rolebinding.yaml
+oc apply -f hazelcast-deployment.yaml
+oc apply -f hazelcast-service.yaml
+
+
+
+hazelcast-deployment.yaml
+hazelcast-role.yaml
+hazelcast-rolebinding.yaml
+hazelcast-service.yaml
+postgresql-service.yaml
+
+
+
+
+oc new-app --template=postgresql-persistent `
+    -p POSTGRESQL_USER=demo_user `
+    -p POSTGRESQL_PASSWORD=demo_pass `
+    -p POSTGRESQL_DATABASE=demo `
+    -p VOLUME_CAPACITY=1Gi

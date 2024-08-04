@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hazelcast
+  namespace: demo-hazelcast
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hazelcast
+  template:
+    metadata:
+      labels:
+        app: hazelcast
+    spec:
+      containers:
+        - name: hazelcast
+          image: vlad1111p/demohazelcast:latest
+          ports:
+            - containerPort: 5701
+            - containerPort: 8080
+          env:
+            - name: JAVA_OPTS
+              value: "-Dhazelcast.cluster.name=dev -Dhazelcast.network.join.kubernetes.enabled=true"
+            - name: HZ_KUBERNETES_SERVICE_DNS
+              value: "hazelcast-service.demo-hazelcast.svc.cluster.local"
+
+
+
+
